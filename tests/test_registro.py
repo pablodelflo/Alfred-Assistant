@@ -15,3 +15,12 @@ def test_descubre_valido_e_ignora_invalido(tmp_path, monkeypatch):
     validos, avisos = reg.descubrir()
     assert [m.id for m in validos] == ["ok"]
     assert len(avisos) == 1 and "faltan campos" in avisos[0]
+
+
+def test_dependencias_faltantes(monkeypatch):
+    import importlib.util
+    from alfred.nucleo.arranque import requisitos
+
+    monkeypatch.setattr(importlib.util, "find_spec", lambda nombre: None)
+    r = requisitos.comprobar_dependencias()
+    assert not r.ok and "pip install -e ." in r.mensaje

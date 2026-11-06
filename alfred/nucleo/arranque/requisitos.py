@@ -1,4 +1,5 @@
 """Comprobación de requisitos al arrancar."""
+import importlib.util
 import sys
 from dataclasses import dataclass
 
@@ -19,6 +20,17 @@ def comprobar_python() -> Resultado:
     if (v.major, v.minor) < PYTHON_MINIMO:
         return Resultado(False, f"Python {v.major}.{v.minor} detectado; se requiere {PYTHON_MINIMO[0]}.{PYTHON_MINIMO[1]} o superior.")
     return Resultado(True, f"Python {v.major}.{v.minor}.{v.micro}")
+
+
+DEPENDENCIAS = ("fastapi", "uvicorn", "jinja2", "psycopg")
+
+
+def comprobar_dependencias() -> Resultado:
+    faltan = [d for d in DEPENDENCIAS if importlib.util.find_spec(d) is None]
+    if faltan:
+        return Resultado(False, f"Faltan dependencias de Python: {', '.join(faltan)}. "
+                                "Con el entorno virtual activado, ejecuta: pip install -e .")
+    return Resultado(True, "Dependencias de Python instaladas")
 
 
 def comprobar_postgres(config: Config) -> Resultado:
@@ -45,7 +57,9 @@ def comprobar_zona_temporal(config: Config) -> Resultado:
 
 
 def comprobar_todo() -> tuple[bool, Config | None, list[Resultado]]:
-    resultados = [comprobar_python()]
+    resultados = [comprobar_python(), comprobar_dependencias()]
+    if not all(r.ok for r in resultados):
+        return False, None, resultados
     try:
         config = cargar()
     except ErrorConfig as e:
