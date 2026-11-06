@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h1>Catálogo</h1>
+{% if minijobs %}
+  <ul class="catalogo">
+  {% for m in minijobs %}
+    <li><strong>{{ m.nombre }}</strong> <small>({{ m.categoria }})</small><br>{{ m.descripcion }}</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>Todavía no hay minijobs instalados.</p>
+{% endif %}
+{% for a in avisos %}<p class="aviso">Minijob ignorado: {{ a }}</p>{% endfor %}
+{% endblock %}

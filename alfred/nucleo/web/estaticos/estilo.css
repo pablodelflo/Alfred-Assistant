@@ -1,0 +1,5 @@
+body { font-family: system-ui, sans-serif; max-width: 48rem; margin: 0 auto; padding: 1rem; }
+header a { font-weight: bold; font-size: 1.2rem; text-decoration: none; }
+footer { margin-top: 3rem; font-size: .85rem; color: #666; }
+.aviso { color: #b45309; }
+pre { white-space: pre-wrap; }

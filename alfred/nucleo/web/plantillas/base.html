@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ nombre }}</title>
+  <link rel="stylesheet" href="/estaticos/estilo.css">
+</head>
+<body>
+  <header><a href="/">{{ nombre }}</a></header>
+  <main>{% block contenido %}{% endblock %}</main>
+  <footer>
+    {{ aviso_corto }} · {{ nombre }} v{{ version }} · <a href="/acerca-de">Acerca de</a>
+  </footer>
+</body>
+</html>

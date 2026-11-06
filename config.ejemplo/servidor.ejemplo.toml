@@ -1,0 +1,12 @@
+# Copia este fichero a config/servidor.toml y ajústalo.
+
+[servidor]
+host = "127.0.0.1"
+port = 8000
+
+[base_datos]
+# PostgreSQL 14 o superior
+url = "postgresql://alfred:CAMBIAME@localhost:5432/alfred"
+
+[almacenamiento]
+zona_temporal = "datos/temporal"

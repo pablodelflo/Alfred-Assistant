@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+/config/
+/datos/
+/subidas/
+*.env
+credenciales*
+minijobs_personales/*
+!minijobs_personales/.gitkeep
