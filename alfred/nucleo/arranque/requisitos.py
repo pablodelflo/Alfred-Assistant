@@ -22,7 +22,7 @@ def comprobar_python() -> Resultado:
     return Resultado(True, f"Python {v.major}.{v.minor}.{v.micro}")
 
 
-DEPENDENCIAS = ("fastapi", "uvicorn", "jinja2", "psycopg")
+DEPENDENCIAS = ("fastapi", "uvicorn", "jinja2", "psycopg", "sqlalchemy", "alembic")
 
 
 def comprobar_dependencias() -> Resultado:
@@ -48,6 +48,20 @@ def comprobar_postgres(config: Config) -> Resultado:
     return Resultado(True, f"PostgreSQL {version}")
 
 
+def comprobar_esquema(config: Config) -> Resultado:
+    from alfred.nucleo.datos.base import crear_motor
+    from alfred.nucleo.datos.esquema import revision_actual, revision_cabeza
+
+    try:
+        actual = revision_actual(crear_motor(config.url_bd))
+    except Exception as e:
+        return Resultado(False, f"No se pudo leer el esquema de la base de datos ({type(e).__name__}).")
+    if actual != revision_cabeza():
+        return Resultado(False, "El esquema de la base de datos no está al día. "
+                                "Ejecuta: python -m alfred.nucleo.datos actualizar")
+    return Resultado(True, f"Esquema de base de datos al día (revisión {actual})")
+
+
 def comprobar_zona_temporal(config: Config) -> Resultado:
     try:
         config.zona_temporal.mkdir(parents=True, exist_ok=True)
@@ -67,5 +81,7 @@ def comprobar_todo() -> tuple[bool, Config | None, list[Resultado]]:
         return False, None, resultados
     resultados.append(Resultado(True, "Configuración cargada"))
     resultados.append(comprobar_postgres(config))
+    if resultados[-1].ok:
+        resultados.append(comprobar_esquema(config))
     resultados.append(comprobar_zona_temporal(config))
     return all(r.ok for r in resultados), config, resultados
